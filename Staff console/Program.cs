@@ -1,103 +1,131 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Staff_console
 {
     class Program
     {
+        public static List<TeachingStaff> TeachingStaffs { get; set; }
+        public static List<AdministrativeStaff> AdministrativeStaffs { get; set; }
+        public static List<SupportStaff> SupportStaffs { get; set; }
+
+        private static int _staffId = 1;
 
         public static readonly String[] staffTypes = { "Teaching Staff", "Administrative Staff", "Support Staff" };
-        static StaffList staffList;
+        public static readonly String line = "-------------------------------------------------------------------------";
+        public static readonly String selectStaffMenu = "Select Staff \n  1) " + staffTypes[0] + "\n  2) " + staffTypes[1] + "\n  3) " + staffTypes[2] + "\n  4) Exit";
+        public static readonly String optionsMenu = "Select menu \n  1) Add a {0}\n  2) Update details of a {0}\n  3) Delete a {0}\n  4) View one specific {0}\n  5) View all {0}\n  6) Back";
 
-        public static Staff GetInput(int staffType)
+        public static void AddStaff(int staffType)
         {
-            string name, location, gender;
-
-            Staff staff;
-
-            //Reading input
-            Console.WriteLine("Enter Name: ");
-            name = Console.ReadLine();
-            Console.WriteLine("Enter Location: ");
-            location = Console.ReadLine();
-            Console.WriteLine("Enter Gender: ");
-            gender = Console.ReadLine();
-
             switch (staffType)
             {
                 case 1:
-                    string subjectName, dept;
+
+                    //Create new Teaching Staff
+                    TeachingStaff newTeachingStaff = new TeachingStaff(_staffId++);
 
                     //Reading inputs
+                    Console.WriteLine("Enter Name: ");
+                    newTeachingStaff.Name = Console.ReadLine();
                     Console.WriteLine("Enter Subject Name: ");
-                    subjectName = Console.ReadLine();
-                    Console.WriteLine("Enter Department: ");
-                    dept = Console.ReadLine();
+                    newTeachingStaff.SubjectName = Console.ReadLine();
 
-                    staff = new TeachingStaff(0, name, location, gender, subjectName, dept);
+                    //Add to list
+                    TeachingStaffs.Add(newTeachingStaff);
 
                     break;
 
                 case 2:
-                    string position;
+
+                    //Create new Administrative Staff
+                    AdministrativeStaff newAdministrativeStaff = new AdministrativeStaff(_staffId++);
 
                     //Reading inputs
+                    Console.WriteLine("Enter Name: ");
+                    newAdministrativeStaff.Name = Console.ReadLine();
                     Console.WriteLine("Enter Position: ");
-                    position = Console.ReadLine();
+                    newAdministrativeStaff.Position = Console.ReadLine();
 
-                    staff = new AdministrativeStaff(0, name, location, gender, position);
+                    //Add to list
+                    AdministrativeStaffs.Add(newAdministrativeStaff);
 
                     break;
 
                 case 3:
-                    string role;
+
+                    //Create new Support Staff
+                    SupportStaff newSupportStaff = new SupportStaff(_staffId++);
 
                     //Reading inputs
+                    Console.WriteLine("Enter Name: ");
+                    newSupportStaff.Name = Console.ReadLine();
                     Console.WriteLine("Enter role: ");
-                    role = Console.ReadLine();
+                    newSupportStaff.Role = Console.ReadLine();
 
-                    staff = new SupportStaff(0, name, location, gender, role);
+                    //Add to list
+                    SupportStaffs.Add(newSupportStaff);
 
                     break;
 
                 default:
                     Console.WriteLine("!!! Invalid");
-                    return null;
+                    return;
             }
 
-            return staff;
-        }
-
-        public static void AddStaff(int staffType)
-        {
-
-            Staff staff = GetInput(staffType);
-
-            int id = staffList.AddStaff(staff, true);
-            if(id != -1)
-            {
-                Console.WriteLine(staffTypes[staffType - 1] + " Added Successfully. id: "+id+"\n");
-            }
-            else
-            {
-                Console.WriteLine("Error! Cannot add "+staffTypes[staffType - 1] + "\n");
-            }
+            Console.WriteLine(staffTypes[staffType - 1] + " Added Successfully.\n");
         }
 
         public static void UpdateStaff(int id, int staffType)
         {
-            bool isDeleted;
             switch (staffType)
             {
                 case 1:
-                    isDeleted = staffList.TeachingStaffs.Remove(staffList.TeachingStaffs.Find(item => item.Id == id));
+                    TeachingStaff teachingStaffUpdate = TeachingStaffs.Find(item => item.Id == id);
+                    if(teachingStaffUpdate != null)
+                    {
+                        //Reading inputs for update
+                        Console.WriteLine("Update Name: ");
+                        teachingStaffUpdate.Name = Console.ReadLine();
+                        Console.WriteLine("Update Subject Name: ");
+                        teachingStaffUpdate.SubjectName = Console.ReadLine();
+
+                        Console.WriteLine(staffTypes[staffType - 1] + " Updated Successfully\n");
+
+                        return;
+                    }
                     break;
 
                 case 2:
-                    isDeleted = staffList.AdministrativeStaffs.Remove(staffList.AdministrativeStaffs.Find(item => item.Id == id));
+                    AdministrativeStaff administrativeStaffUpdate = AdministrativeStaffs.Find(item => item.Id == id);
+                    if (administrativeStaffUpdate != null)
+                    {
+                        //Reading inputs for update
+                        Console.WriteLine("Update Name: ");
+                        administrativeStaffUpdate.Name = Console.ReadLine();
+                        Console.WriteLine("Update Position: ");
+                        administrativeStaffUpdate.Position = Console.ReadLine();
+
+                        Console.WriteLine(staffTypes[staffType - 1] + " Updated Successfully\n");
+
+                        return;
+                    }
                     break;
 
                 case 3:
-                    isDeleted = staffList.SupportStaffs.Remove(staffList.SupportStaffs.Find(item => item.Id == id));
+                    SupportStaff supportStaffUpdate = SupportStaffs.Find(item => item.Id == id);
+                    if (supportStaffUpdate != null)
+                    {
+                        //Reading inputs for update
+                        Console.WriteLine("Update Name: ");
+                        supportStaffUpdate.Name = Console.ReadLine();
+                        Console.WriteLine("Update role: ");
+                        supportStaffUpdate.Role = Console.ReadLine();
+
+                        Console.WriteLine(staffTypes[staffType - 1] + " Updated Successfully\n");
+
+                        return;
+                    }
                     break;
 
                 default:
@@ -105,22 +133,8 @@ namespace Staff_console
                     return;
 
             }
-            if (!isDeleted)
-            {
-                Console.WriteLine("Invalid staff! Cannot update " + staffTypes[staffType - 1] + "\n");
-                return;
-            }
-            Staff s = GetInput(staffType);
-            s.Id = id;
-            int getid = staffList.AddStaff(s, false);
-            if (getid != -1)
-            {
-                Console.WriteLine(staffTypes[staffType - 1] + " Updated Successfully. id: " + id + "\n");
-            }
-            else
-            {
-                Console.WriteLine("Error! Cannot update " + staffTypes[staffType - 1] + "\n");
-            }
+
+            Console.WriteLine("Invalid Staff! Cannot Update " + staffTypes[staffType - 1] + "\n");
         }
 
         public static void DeleteStaff(int id, int staffType)
@@ -129,15 +143,15 @@ namespace Staff_console
             switch (staffType)
             {
                 case 1:
-                    isDeleted = staffList.TeachingStaffs.Remove(staffList.TeachingStaffs.Find(item => item.Id == id));
+                    isDeleted = TeachingStaffs.Remove(TeachingStaffs.Find(item => item.Id == id));
                     break;
 
                 case 2:
-                    isDeleted = staffList.AdministrativeStaffs.Remove(staffList.AdministrativeStaffs.Find(item => item.Id == id));
+                    isDeleted = AdministrativeStaffs.Remove(AdministrativeStaffs.Find(item => item.Id == id));
                     break;
 
                 case 3:
-                    isDeleted = staffList.SupportStaffs.Remove(staffList.SupportStaffs.Find(item => item.Id == id));
+                    isDeleted = SupportStaffs.Remove(SupportStaffs.Find(item => item.Id == id));
                     break;
 
                 default:
@@ -160,12 +174,12 @@ namespace Staff_console
             switch (staffType)
             {
                 case 1:
-                    Console.WriteLine("Id\t\tName\t\tLocation\t\tGender\t\tSubject Name\t\tDepartment");
-                    Console.WriteLine("----------------------------------------------------------------------------------------------");
-                    TeachingStaff t = (staffList.TeachingStaffs.Find(item => item.Id == id));
+                    Console.WriteLine(TeachingStaff.HeadLinePrintable);
+                    Console.WriteLine(line);
+                    TeachingStaff t = (TeachingStaffs.Find(item => item.Id == id));
                     if(t != null)
                     {
-                        Console.WriteLine(t.Id + "\t\t" + t.Name + "\t\t" + t.Location + "\t\t" + t.Gender + "\t\t" + t.SubjectName + "\t\t" + t.Dept);
+                        Console.WriteLine(t.GetPrintable());
                     }
                     else
                     {
@@ -175,12 +189,12 @@ namespace Staff_console
                     break;
 
                 case 2:
-                    Console.WriteLine("Id\t\tName\t\tLocation\t\tGender\t\tPosition");
-                    Console.WriteLine("----------------------------------------------------------------------------------------------");
-                    AdministrativeStaff a = staffList.AdministrativeStaffs.Find(item => item.Id == id);
+                    Console.WriteLine(AdministrativeStaff.HeadLinePrintable);
+                    Console.WriteLine(line);
+                    AdministrativeStaff a = AdministrativeStaffs.Find(item => item.Id == id);
                     if(a != null)
                     {
-                        Console.WriteLine(a.Id + "\t\t" + a.Name + "\t\t" + a.Location + "\t\t" + a.Gender + "\t\t" + a.Position);
+                        Console.WriteLine(a.GetPrintable());
                     }
                     else
                     {
@@ -189,12 +203,12 @@ namespace Staff_console
                     break;
 
                 case 3:
-                    Console.WriteLine("Id\t\tName\t\tLocation\t\tGender\t\tRole");
-                    Console.WriteLine("----------------------------------------------------------------------------------------------");
-                    SupportStaff s = (staffList.SupportStaffs.Find(item => item.Id == id));
+                    Console.WriteLine(SupportStaff.HeadLinePrintable);
+                    Console.WriteLine(line);
+                    SupportStaff s = (SupportStaffs.Find(item => item.Id == id));
                     if(s != null)
                     {
-                        Console.WriteLine(s.Id + "\t\t" + s.Name + "\t\t" + s.Location + "\t\t" + s.Gender + "\t\t" + s.Role);
+                        Console.WriteLine(s.GetPrintable());
                     }
                     else
                     {
@@ -207,7 +221,7 @@ namespace Staff_console
                     Console.WriteLine("!!! Invalid");
                     return;
             }
-            Console.WriteLine("----------------------------------------------------------------------------------------------\n");
+            Console.WriteLine(line+"\n");
         }
 
         public static void ViewAll(int staffType)
@@ -216,51 +230,57 @@ namespace Staff_console
             switch (staffType)
             {
                 case 1:
-                    Console.WriteLine("Id\t\tName\t\tLocation\t\tGender\t\tSubject Name\t\tDepartment");
-                    Console.WriteLine("----------------------------------------------------------------------------------------------");
-                    foreach (TeachingStaff t in staffList.TeachingStaffs)
+                    Console.WriteLine(TeachingStaff.HeadLinePrintable);
+                    Console.WriteLine(line);
+                    foreach (TeachingStaff t in TeachingStaffs)
                     {
-                        Console.WriteLine(t.Id+"\t\t"+ t.Name+ "\t\t" + t.Location + "\t\t" + t.Gender + "\t\t" + t.SubjectName + "\t\t" + t.Dept);
+                        Console.WriteLine(t.GetPrintable());
                     }
                     break;
 
                 case 2:
-                    Console.WriteLine("Id\t\tName\t\tLocation\t\tGender\t\tPosition");
-                    Console.WriteLine("----------------------------------------------------------------------------------------------");
-                    foreach (AdministrativeStaff t in staffList.AdministrativeStaffs)
+                    Console.WriteLine(AdministrativeStaff.HeadLinePrintable);
+                    Console.WriteLine(line);
+                    foreach (AdministrativeStaff t in AdministrativeStaffs)
                     {
-                        Console.WriteLine(t.Id + "\t\t" + t.Name + "\t\t" + t.Location + "\t\t" + t.Gender + "\t\t" + t.Position);
+                        Console.WriteLine(t.GetPrintable());
                     }
                     break;
 
                 case 3:
-                    Console.WriteLine("Id\t\tName\t\tLocation\t\tGender\t\tRole");
-                    Console.WriteLine("----------------------------------------------------------------------------------------------");
-                    foreach (SupportStaff t in staffList.SupportStaffs)
+                    Console.WriteLine(SupportStaff.HeadLinePrintable);
+                    Console.WriteLine(line);
+                    foreach (SupportStaff t in SupportStaffs)
                     {
-                        Console.WriteLine(t.Id + "\t\t" + t.Name + "\t\t" + t.Location + "\t\t" + t.Gender + "\t\t" + t.Role);
+                        Console.WriteLine(t.GetPrintable());
                     }
                     break;
             }
-            Console.WriteLine("----------------------------------------------------------------------------------------------\n");
+            Console.WriteLine(line+"\n");
         }
 
         static void Main(string[] args)
         {
-            staffList = new StaffList();
-            bool isDone = false;
+            //Initialising Lists
+            TeachingStaffs = new List<TeachingStaff>();
+            AdministrativeStaffs = new List<AdministrativeStaff>();
+            SupportStaffs = new List<SupportStaff>();
 
+
+            bool isDone = false;
             while(!isDone)
             {
-                int choose;
-                Console.WriteLine("Select Staff \n  1) "+staffTypes[0]+ "\n  2) " + staffTypes[1] + "\n  3) " + staffTypes[2] + "\n  4) Exit");
-                choose = Convert.ToInt32(Console.ReadLine());
-                switch (choose)
+                int chooseStaff;
+
+                //Show Staff Selection Menu
+                Console.WriteLine(selectStaffMenu);
+                chooseStaff = Convert.ToInt32(Console.ReadLine());
+                switch (chooseStaff)
                 {
                     case 1:
                     case 2:
                     case 3:
-                        Console.WriteLine("\n-> " + staffTypes[choose-1] + " Selected\n");
+                        Console.WriteLine("\n-> " + staffTypes[chooseStaff-1] + " Selected\n");
                         break;
                     case 4:
                         Console.WriteLine("\nExiting...\n");
@@ -277,34 +297,35 @@ namespace Staff_console
                 {
                     int menu;
 
-                    Console.WriteLine("Select menu \n  1) Add a " + staffTypes[choose - 1] + "\n  2) Update details of a " + staffTypes[choose - 1] + "\n  3) Delete a " + staffTypes[choose - 1] + "\n  4) View one specific " + staffTypes[choose - 1] + "\n  5) View all " + staffTypes[choose - 1] + "\n  6) Back");
+                    //Show Options Menu
+                    Console.WriteLine(String.Format( optionsMenu, staffTypes[chooseStaff-1]));
                     menu = Convert.ToInt32(Console.ReadLine());
                     switch (menu)
                     {
                         case 1:
-                            Console.WriteLine("\n-> Add " + staffTypes[choose - 1] + "\n");
-                            AddStaff(choose);
+                            Console.WriteLine("\n-> Add " + staffTypes[chooseStaff - 1] + "\n");
+                            AddStaff(chooseStaff);
                             break;
                         case 2:
-                            Console.WriteLine("\n-> Update details of a " + staffTypes[choose - 1]);
+                            Console.WriteLine("\n-> Update details of a " + staffTypes[chooseStaff - 1]);
                             Console.WriteLine("Enter Staff Id: ");
-                            int idu = Convert.ToInt32(Console.ReadLine());
-                            UpdateStaff(idu, choose);
+                            int updateStaffId = Convert.ToInt32(Console.ReadLine());
+                            UpdateStaff(updateStaffId, chooseStaff);
                             break;
                         case 3:
-                            Console.WriteLine("\n-> Delete a " + staffTypes[choose - 1] + "");
+                            Console.WriteLine("\n-> Delete a " + staffTypes[chooseStaff - 1] + "");
                             Console.WriteLine("Enter Staff Id: ");
-                            int id = Convert.ToInt32(Console.ReadLine());
-                            DeleteStaff(id, choose);
+                            int DeleteStaffId = Convert.ToInt32(Console.ReadLine());
+                            DeleteStaff(DeleteStaffId, chooseStaff);
                             break;
                         case 4:
-                            Console.WriteLine("\n-> View one specific " + staffTypes[choose - 1]);
+                            Console.WriteLine("\n-> View one specific " + staffTypes[chooseStaff - 1]);
                             Console.WriteLine("Enter Staff Id: ");
-                            int idv = Convert.ToInt32(Console.ReadLine());
-                            ViewSpecificStaff(idv, choose);
+                            int ViewStaffId = Convert.ToInt32(Console.ReadLine());
+                            ViewSpecificStaff(ViewStaffId, chooseStaff);
                             break;
                         case 5:
-                            ViewAll(choose);
+                            ViewAll(chooseStaff);
                             break;
                         case 6:
                             Console.WriteLine("\n<- back...\n");
