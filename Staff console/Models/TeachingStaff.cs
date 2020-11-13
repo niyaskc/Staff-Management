@@ -6,16 +6,27 @@ namespace Staff_console.Models
 {
     class TeachingStaff : Staff
     {
+        #region Class Member Variables
         public String SubjectName { get; set; }
 
         public static readonly String HeadLinePrintable = "Id\t\tName\t\tSubject Name\t\tType";
+        #endregion
 
-        public TeachingStaff(int id) : base(id, StaffType.teachingStaff)
+        #region Validation Methods
+
+        //Validate Subject Name
+        private bool ValidateSubjectName(String subjectName)
         {
-
+            if (subjectName?.Length > 1)
+            {
+                return true;
+            }
+            Console.WriteLine("\n!!! Invalid Subject Name. Minimum 2 Letters.\n");
+            return false;
         }
+        #endregion
 
-
+        #region Overriding Methods
         public override Staff Add()
         {
             Console.WriteLine("\n-> Add a Teaching Staff:-");
@@ -30,11 +41,6 @@ namespace Staff_console.Models
             Console.WriteLine("\n Teaching Staff Updated.\n");
         }
 
-        public override void Delete()
-        {
-            ClearValues();
-        }
-
         public override void View()
         {
             Console.WriteLine(HeadLinePrintable);
@@ -42,7 +48,6 @@ namespace Staff_console.Models
             Console.WriteLine(GetPrintable());
             Console.WriteLine("-----------------------------------------------------------------------------------------\n");
         }
-
 
         public override string GetPrintable()
         {
@@ -54,19 +59,18 @@ namespace Staff_console.Models
             //Read Common Inputs
             base.GetConsoleInput();
             //Read Specific Inputs
-            Console.WriteLine("Enter Subject Name: ");
-            SubjectName = Console.ReadLine();
+            this.SubjectName = ReadAndValidateInput<String>(this.SubjectName, "Enter Subject Name: ", s => String.IsNullOrEmpty(s), ValidateSubjectName);
         }
 
         public override string GetHeadLinePrintable()
         {
             return HeadLinePrintable;
         }
+        #endregion
 
-        public override void ClearValues()
+        public TeachingStaff(int id) : base(id, StaffType.teachingStaff)
         {
-            base.ClearValues();
-            SubjectName = "";
+
         }
     }
 }

@@ -6,18 +6,28 @@ namespace Staff_console.Models
 {
     class SupportStaff : Staff
     {
+        #region Class Member Variables
         public String Role { get; set; }
 
         public static readonly String HeadLinePrintable = "Id\t\tName\t\tRole\t\tType";
+        #endregion
 
-        public SupportStaff(int id) : base(id, StaffType.supportStaff)
+        #region Validation Methods
+        
+        //Validate Role
+        private bool ValidateRole(String role)
         {
-            
+            if (role?.Length > 4)
+            {
+                return true;
+            }
+            Console.WriteLine("\n!!! Invalid Role. Minimum 5 Letters. \n");
+            return false;
         }
 
-        
+        #endregion
 
-
+        #region Overriding Methods
         public override Staff Add()
         {
             Console.WriteLine("\n-> Add a Support Staff:-");
@@ -32,11 +42,6 @@ namespace Staff_console.Models
             Console.WriteLine("\n Support Staff Updated.\n");
         }
 
-        public override void Delete()
-        {
-            ClearValues();
-        }
-
         public override void View()
         {
             Console.WriteLine(HeadLinePrintable);
@@ -44,7 +49,6 @@ namespace Staff_console.Models
             Console.WriteLine(GetPrintable());
             Console.WriteLine("-----------------------------------------------------------------------------------------\n");
         }
-
 
         public override string GetPrintable()
         {
@@ -56,19 +60,19 @@ namespace Staff_console.Models
             //Read Common Inputs
             base.GetConsoleInput();
             //Read Specific Inputs
-            Console.WriteLine("Enter role: ");
-            Role = Console.ReadLine();
+            this.Role = ReadAndValidateInput<String>(this.Role, "Enter Role: ", s => String.IsNullOrEmpty(s), ValidateRole);
         }
 
         public override string GetHeadLinePrintable()
         {
             return HeadLinePrintable;
         }
+        #endregion
 
-        public override void ClearValues()
+
+        public SupportStaff(int id) : base(id, StaffType.supportStaff)
         {
-            base.ClearValues();
-            Role = "";
+
         }
     }
 }
