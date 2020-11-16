@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Staff_console.Models
+namespace StaffModelsLibrary
 {
     public enum StaffType
     {

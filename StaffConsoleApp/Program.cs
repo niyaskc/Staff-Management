@@ -1,10 +1,9 @@
-﻿using Staff_console.Helpers;
-using Staff_console.Models;
+﻿using StaffModelsLibrary;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 
-namespace Staff_console
+namespace StaffConsoleApp
 {
     class Program
     {
@@ -35,7 +34,7 @@ namespace Staff_console
                     case 1:
                         Console.WriteLine("\n->Add  Staff:-\n");
                         Staff newStaff = ConsoleHelper.ReadAndCreateStaffFromType();
-                        lstStaff.Add(newStaff.Add());
+                        lstStaff.Add(newStaff);
                         Console.WriteLine("\nStaff Added.\n");
                         break;
                     case 2:
@@ -47,7 +46,7 @@ namespace Staff_console
                             Console.WriteLine("!!!! Staff Not Found\n");
                             continue;
                         }
-                        getStaff.Update();
+                        ConsoleHelper.ReadOrUpdateStaffDetails(getStaff);
                         break;
                     case 3:
                         Console.WriteLine("\n-> Delete a Staff");
@@ -69,7 +68,7 @@ namespace Staff_console
                         Staff staffRead = lstStaff.Find(s => s.Id == staffId);
                         if (staffRead != null)
                         {
-                            staffRead.View();
+                            ConsoleHelper.ViewStaff(staffRead);
                         }
                         else
                         {
@@ -78,7 +77,7 @@ namespace Staff_console
                         }
                         break;
                     case 5:
-                        Staff.ViewAll(lstStaff);
+                        ConsoleHelper.ViewAll(lstStaff);
                         break;
                     case 6:
                         Console.WriteLine("\n<- Exit...\n");
