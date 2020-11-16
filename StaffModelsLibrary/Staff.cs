@@ -17,13 +17,6 @@ namespace StaffModelsLibrary
         public StaffType StaffType { get; }
         #endregion
 
-        #region Abstract Methods
-
-        public abstract String GetPrintable();
-
-        public abstract String GetHeadLinePrintable();
-        #endregion
-
         #region Validation Methods
 
         //Validate Name

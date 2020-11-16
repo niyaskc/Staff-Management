@@ -1,4 +1,5 @@
 ﻿using StaffModelsLibrary;
+using StaffStorage;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -11,8 +12,8 @@ namespace StaffConsoleApp
 
         static void Main(string[] args)
         {
-            //Initialising Staff List
-            List<Staff> lstStaff = new List<Staff>();
+            //Initialising Staff Storage (Repo)
+            IRepository staffRepo = new InMemoryStorage();
             bool isMenuDone = false;
 
             //print school Name from config file
@@ -34,38 +35,32 @@ namespace StaffConsoleApp
                     case 1:
                         Console.WriteLine("\n->Add  Staff:-\n");
                         Staff newStaff = ConsoleHelper.ReadAndCreateStaffFromType();
-                        lstStaff.Add(newStaff);
-                        Console.WriteLine("\nStaff Added.\n");
+                        bool isAdded = staffRepo.AddStaff(newStaff);
+                        Console.WriteLine(isAdded ? "\nStaff Added.\n" : "!!! Error. Staff Not Added\n");
                         break;
                     case 2:
                         Console.WriteLine("\n-> Update details of a Staff");
                         int updateId = ConsoleHelper.ReadStaffId();
-                        Staff getStaff = lstStaff.Find(s => s.Id == updateId);
-                        if (getStaff == null)
+                        Staff staffToUpdate = staffRepo.ViewStaff(updateId);
+                        if (staffToUpdate == null)
                         {
                             Console.WriteLine("!!!! Staff Not Found\n");
                             continue;
                         }
-                        ConsoleHelper.ReadOrUpdateStaffDetails(getStaff);
+                        ConsoleHelper.ReadOrUpdateStaffDetails(staffToUpdate);
+                        bool isupdated = staffRepo.UpdateStaff(updateId, staffToUpdate);
+                        Console.WriteLine(isupdated ? "Staff Updated Successfully\n" : "!!! Error. Staff Not Updated\n");
                         break;
                     case 3:
                         Console.WriteLine("\n-> Delete a Staff");
                         int deleteId = ConsoleHelper.ReadStaffId();
-                        bool isDeleted = lstStaff.Remove(lstStaff.Find(s => s.Id == deleteId));
-                        if (isDeleted)
-                        {
-                            Console.WriteLine("Staff Deleted Successfully\n");
-                        }
-                        else
-                        {
-                            Console.WriteLine("!!! Staff Not Found or Deleted.\n");
-                            continue;
-                        }
+                        bool isDeleted = staffRepo.DeleteStaff(deleteId);
+                        Console.WriteLine(isDeleted ? "Staff Deleted Successfully\n" : "!!! Staff Not Found or Deleted.\n");
                         break;
                     case 4:
                         Console.WriteLine("\n-> View a Staff");
                         int staffId = ConsoleHelper.ReadStaffId();
-                        Staff staffRead = lstStaff.Find(s => s.Id == staffId);
+                        Staff staffRead = staffRepo.ViewStaff(staffId);
                         if (staffRead != null)
                         {
                             ConsoleHelper.ViewStaff(staffRead);
@@ -77,7 +72,7 @@ namespace StaffConsoleApp
                         }
                         break;
                     case 5:
-                        ConsoleHelper.ViewAll(lstStaff);
+                        ConsoleHelper.ViewAll(staffRepo.ViewAllStaff());
                         break;
                     case 6:
                         Console.WriteLine("\n<- Exit...\n");

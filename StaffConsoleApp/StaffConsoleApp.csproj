@@ -11,7 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\StaffModelLibrary\StaffModelsLibrary.csproj" />
+    <ProjectReference Include="..\StaffModelsLibrary\StaffModelsLibrary.csproj" />
+    <ProjectReference Include="..\StaffStorage\StaffStorage.csproj" />
   </ItemGroup>
 
 </Project>

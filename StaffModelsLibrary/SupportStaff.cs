@@ -8,8 +8,6 @@ namespace StaffModelsLibrary
     {
         #region Class Member Variables
         public String Role { get; set; }
-
-        public static readonly String HeadLinePrintable = "Id\t\tName\t\tRole\t\tType";
         #endregion
 
         #region Validation Methods
@@ -25,20 +23,6 @@ namespace StaffModelsLibrary
         }
 
         #endregion
-
-        #region Overriding Methods
-
-        public override string GetPrintable()
-        {
-            return $"{Id}\t\t{Name}\t\t{Role}\t\t{StaffType}";
-        }
-
-        public override string GetHeadLinePrintable()
-        {
-            return HeadLinePrintable;
-        }
-        #endregion
-
 
         public SupportStaff(int id) : base(id, StaffType.supportStaff)
         {

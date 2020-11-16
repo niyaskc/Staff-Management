@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StaffConsoleApp", "StaffCon
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StaffModelsLibrary", "StaffModelsLibrary\StaffModelsLibrary.csproj", "{D5EDC42B-DAD5-477A-A4EF-4353368E1EF8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StaffStorage", "StaffStorage\StaffStorage.csproj", "{EEA7ED4E-C38A-4813-A2AB-0E569CC21B13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{D5EDC42B-DAD5-477A-A4EF-4353368E1EF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5EDC42B-DAD5-477A-A4EF-4353368E1EF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5EDC42B-DAD5-477A-A4EF-4353368E1EF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEA7ED4E-C38A-4813-A2AB-0E569CC21B13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEA7ED4E-C38A-4813-A2AB-0E569CC21B13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEA7ED4E-C38A-4813-A2AB-0E569CC21B13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEA7ED4E-C38A-4813-A2AB-0E569CC21B13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
