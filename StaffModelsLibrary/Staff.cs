@@ -9,7 +9,6 @@ public delegate bool IsEmpty<T>(T item);
 
 namespace StaffModelsLibrary
 {
-    [XmlInclude(typeof(TeachingStaff)), XmlInclude(typeof(SupportStaff)), XmlInclude(typeof(AdministrativeStaff))]
     public abstract class Staff
     {
         #region Class Member Variables

@@ -76,7 +76,6 @@ namespace StaffConsoleApp
                         ConsoleHelper.ViewAll(staffRepo.ViewAllStaff());
                         break;
                     case 6:
-                        staffRepo.Dispose();
                         Console.WriteLine("\n<- Exit...\n");
                         return;
                     default:

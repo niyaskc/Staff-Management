@@ -108,7 +108,7 @@ namespace StaffConsoleApp
         public static void ViewAll(List<Staff> lstStaffs)
         {
             Console.WriteLine("\n->View All Staffs:-");
-            if (lstStaffs.Count == 0)
+            if ((lstStaffs?.Count ?? 0) == 0)
             {
                 Console.WriteLine("\n---No Staffs---\n");
                 return;
@@ -126,11 +126,11 @@ namespace StaffConsoleApp
         {
             List<Staff> lstStaffFilteredByType = lstStaffs.FindAll(staff => staff.StaffType == staffType);
 
-            if (lstStaffFilteredByType.Count != 0)
+            if ((lstStaffFilteredByType?.Count ?? 0) != 0)
             {
                 Console.WriteLine("Printing " + staffType + " :");
                 //Print Headline
-                Console.WriteLine(GetHeadLineFromStaffType(lstStaffFilteredByType[0].StaffType));
+                Console.WriteLine(GetHeadLineFromStaffType(staffType));
                 Console.WriteLine("-----------------------------------------------------------------------------------------");
                 foreach (Staff s in lstStaffFilteredByType)
                 {

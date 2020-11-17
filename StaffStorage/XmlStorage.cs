@@ -2,54 +2,83 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 
 namespace StaffStorage
 {
-    public class XmlStorage : InMemoryStorage
+    public class XmlStorage : IRepository
     {
         private readonly String _filePath = System.AppDomain.CurrentDomain.BaseDirectory+"\\XmlRepoData.txt";
+        private XmlSerializer _serializer;
+
         public XmlStorage()
         {
-            DeSerializeXml();
+            _serializer = new XmlSerializer(typeof(List<Staff>), new Type[] { typeof(List<TeachingStaff>), typeof(List<AdministrativeStaff>), typeof(List<SupportStaff>) });
         }
 
-        private void SerializeXml()
+        private bool SerializeXml(List<Staff> staffs)
         {
-            // Define the root element to avoid ArrayOfBranch
-            var serializer = new XmlSerializer(typeof(List<Staff>),
-                                               new XmlRootAttribute("Staffs"));
-            if (File.Exists(_filePath))
-            {
-                File.Delete(_filePath);
-            }
             TextWriter writer = new StreamWriter(_filePath);
-            serializer.Serialize(writer, this.staffs);
+            _serializer.Serialize(writer, staffs);
             writer.Close();
+            return true;
         }
 
-        private void DeSerializeXml()
+        private List<Staff> DeSerializeXml()
         {
-            // Define the root element to avoid ArrayOfBranch
-            var serializer = new XmlSerializer(typeof(List<Staff>), new XmlRootAttribute("Staffs"));
             if (File.Exists(_filePath))
             {
                 TextReader textReader = new StreamReader(_filePath);
-                this.staffs =  (List<Staff>)serializer.Deserialize(textReader);
+                List<Staff> staffs = (List<Staff>)_serializer.Deserialize(textReader);
                 textReader.Close();
+                return staffs;
             }
+            return null;
         }
 
-        ~XmlStorage()
+        public bool AddStaff(Staff staff)
         {
-            SerializeXml();
+            List<Staff> staffs = DeSerializeXml();
+            if(staffs == null)
+            {
+                staffs = new List<Staff>();
+            }
+            staff.Id = staffs.Any() ? staffs.Max(s => s.Id) + 1 : 1;
+            staffs.Add(staff);
+            return SerializeXml(staffs);
         }
 
-        public override void Dispose()
+        public bool UpdateStaff(int id, Staff staff)
         {
-            SerializeXml();
-            base.Dispose();
+            List<Staff> staffs = DeSerializeXml();
+            if (staffs == null || staff == null)
+            {
+                return false;
+            }
+            int indexForUpdate = staffs.FindIndex(s => s.Id == id);
+            if (indexForUpdate < 0) return false;
+            staffs[indexForUpdate] = staff;
+            return SerializeXml(staffs);
+        }
+
+        public bool DeleteStaff(int id)
+        {
+            List<Staff> staffs = DeSerializeXml();
+            bool isFound = staffs.Remove(staffs.Find(s => s.Id == id));
+            if (!isFound) return false;
+            return SerializeXml(staffs);
+        }
+
+        public Staff ViewStaff(int id)
+        {
+            return DeSerializeXml()?.Find(s => s.Id == id);
+        }
+
+        public List<Staff> ViewAllStaff()
+        {
+            return DeSerializeXml();
         }
     }
 }

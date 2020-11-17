@@ -28,15 +28,11 @@ namespace StaffStorage
             return staffs.Remove(staffs.Find(s => s.Id == id));
         }
 
-        public virtual void Dispose()
-        {
-
-        }
-
         public bool UpdateStaff(int id, Staff staff)
         {
-            Staff oldStaff = staffs.Find(s => s.Id == id);
-            oldStaff = staff;
+            int indexForUpdate = staffs.FindIndex(s => s.Id == id);
+            if (indexForUpdate < 0) return false;
+            staffs[indexForUpdate] = staff;
             return true;
         }
 
