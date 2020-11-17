@@ -6,8 +6,8 @@ namespace StaffModelsLibrary
 {
     public enum StaffType
     {
-        teachingStaff,
-        administrativeStaff,
-        supportStaff
+        teachingStaff = 1,
+        administrativeStaff = 2,
+        supportStaff = 3
     }
 }

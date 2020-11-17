@@ -23,7 +23,7 @@ namespace StaffModelsLibrary
         }
         #endregion
 
-        public TeachingStaff(int id) : base(id, StaffType.teachingStaff)
+        public TeachingStaff() : base(StaffType.teachingStaff)
         {
 
         }

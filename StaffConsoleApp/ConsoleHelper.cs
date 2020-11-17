@@ -7,7 +7,6 @@ namespace StaffConsoleApp
 {
     class ConsoleHelper
     {
-        private static int _staffId = 1;
 
         public static Staff ReadAndCreateStaffFromType()
         {
@@ -15,17 +14,17 @@ namespace StaffConsoleApp
             Staff newStaff;
             switch (staffsType)
             {
-                case 1:
+                case (int)StaffType.teachingStaff:
                     Console.WriteLine("\n-> Teaching Staff Selected\n");
-                    newStaff =  new TeachingStaff(_staffId++);
+                    newStaff =  new TeachingStaff();
                     break;
-                case 2:
+                case (int)StaffType.administrativeStaff:
                     Console.WriteLine("\n-> Administrative Staff Selected\n");
-                    newStaff = new AdministrativeStaff(_staffId++);
+                    newStaff = new AdministrativeStaff();
                     break;
-                case 3:
+                case (int)StaffType.supportStaff:
                     Console.WriteLine("\n-> Support Staff Selected\n");
-                    newStaff = new SupportStaff(_staffId++);
+                    newStaff = new SupportStaff();
                     break;
                 default:
                     Console.WriteLine("\n-> Invalid Staff Selected\n");

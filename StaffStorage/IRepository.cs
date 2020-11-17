@@ -5,7 +5,7 @@ using System.Text;
 
 namespace StaffStorage
 {
-    public interface IRepository
+    public interface IRepository : IDisposable
     {
         bool AddStaff(Staff staff);
         bool UpdateStaff(int id, Staff staff);

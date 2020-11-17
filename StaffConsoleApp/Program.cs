@@ -13,8 +13,9 @@ namespace StaffConsoleApp
         static void Main(string[] args)
         {
             //Initialising Staff Storage (Repo)
-            IRepository staffRepo = new InMemoryStorage();
-            bool isMenuDone = false;
+            String repoClassName = ConfigurationManager.AppSettings.Get("Repo Class Name");
+            var repoType = Type.GetType(repoClassName);
+            IRepository staffRepo = Activator.CreateInstance(repoType) as IRepository;
 
             //print school Name from config file
             String schoolName = ConfigurationManager.AppSettings.Get("School Name");
@@ -75,14 +76,14 @@ namespace StaffConsoleApp
                         ConsoleHelper.ViewAll(staffRepo.ViewAllStaff());
                         break;
                     case 6:
+                        staffRepo.Dispose();
                         Console.WriteLine("\n<- Exit...\n");
-                        isMenuDone = true;
-                        continue;
+                        return;
                     default:
                         Console.WriteLine("\n!!! Invalid menu. Please try again.\n");
                         continue;
                 }
-            } while (!isMenuDone);
+            } while (true);
 
         }
     }

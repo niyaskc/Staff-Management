@@ -2,12 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Serialization;
 
 public delegate bool ValidationFunction<T>(T inputForValidation);
 public delegate bool IsEmpty<T>(T item);
 
 namespace StaffModelsLibrary
 {
+    [XmlInclude(typeof(TeachingStaff)), XmlInclude(typeof(SupportStaff)), XmlInclude(typeof(AdministrativeStaff))]
     public abstract class Staff
     {
         #region Class Member Variables
@@ -30,9 +32,8 @@ namespace StaffModelsLibrary
         }
         #endregion
 
-        protected Staff(int id, StaffType staffType)
+        protected Staff(StaffType staffType)
         {
-            Id = id;
             StaffType = staffType;
         }
     }

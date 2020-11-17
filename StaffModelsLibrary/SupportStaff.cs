@@ -24,7 +24,7 @@ namespace StaffModelsLibrary
 
         #endregion
 
-        public SupportStaff(int id) : base(id, StaffType.supportStaff)
+        public SupportStaff() : base(StaffType.supportStaff)
         {
 
         }
