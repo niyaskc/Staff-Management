@@ -10,7 +10,7 @@ namespace StaffStorage
 {
     public class XmlStorage : IRepository
     {
-        private readonly String _filePath = System.AppDomain.CurrentDomain.BaseDirectory+"\\XmlRepoData.txt";
+        private readonly String _filePath = System.AppDomain.CurrentDomain.BaseDirectory+"\\XmlRepoData.xml";
         private XmlSerializer _serializer;
 
         public XmlStorage()

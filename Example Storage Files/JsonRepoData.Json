@@ -1,0 +1,9 @@
+[
+  {
+    "$type": "StaffModelsLibrary.TeachingStaff, StaffModelsLibrary",
+    "SubjectName": "PHY",
+    "Id": 1,
+    "Name": "Niyas",
+    "StaffType": 1
+  }
+]

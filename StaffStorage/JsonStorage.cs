@@ -10,7 +10,7 @@ namespace StaffStorage
 {
     public class JsonStorage : IRepository
     {
-        private readonly String _filePath = System.AppDomain.CurrentDomain.BaseDirectory + "\\JsonRepoData.txt";
+        private readonly String _filePath = System.AppDomain.CurrentDomain.BaseDirectory + "\\JsonRepoData.Json";
         private JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto , NullValueHandling = NullValueHandling.Ignore};
 
         private bool SerializeJson(List<Staff> staffs)
