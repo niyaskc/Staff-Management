@@ -11,87 +11,47 @@ CREATE PROCEDURE [dbo].[AddStaffBulk]
 	@supportStaff SupportStaffType READONLY
 AS
 BEGIN
+	
+	DECLARE @crossIdTable TABLE (OldID INT, [NewID] INT );
 
-	DECLARE @name nchar(25), 
-	@subjectName nchar(25),
-	@role nchar(25),
-	@position nchar(25),
-	@staffType int;
+	-- Adding Staff Common
+	MERGE INTO staff
+	USING @staff ON 1=0
+	WHEN NOT MATCHED BY TARGET
+	THEN
+		INSERT
+           ([Name]
+           ,[StaffTypeID])
+		VALUES
+           ([@staff].[Name]
+           ,[@staff].[StaffTypeID])
+		OUTPUT [@staff].StaffID, inserted.StaffID  INTO @crossIdTable (OldID, [NewId]);
 
-	-- Adding Teaching staff
-	DECLARE cursor_teachingStaff CURSOR
-	FOR
-	SELECT [@staff].[Name], [@staff].[StaffTypeID], [@teachingStaff].SubjectName  FROM @staff inner join @teachingStaff on [@staff].StaffID = [@teachingStaff].StaffID;
+	-- Adding Teaching Staff
+	INSERT INTO [dbo].[teachingStaff]
+           ([StaffID]
+           ,[SubjectName])
+     SELECT staff.StaffID, [@teachingStaff].SubjectName FROM staff INNER JOIN @crossIdTable
+	 ON staff.StaffID = [@crossIdTable].[NewID]
+	 INNER JOIN @teachingStaff 
+	 ON [@teachingStaff].StaffID = [@crossIdTable].[OldID]
 
-	OPEN cursor_teachingStaff;
+	 --Adding Administrative Staff
+	 INSERT INTO [dbo].[administrativeStaff]
+           ([StaffID]
+           ,[Position])
+     SELECT staff.StaffID, [@administrativeStaff].Position FROM staff INNER JOIN @crossIdTable
+	 ON staff.StaffID = [@crossIdTable].[NewID]
+	 INNER JOIN @administrativeStaff 
+	 ON [@administrativeStaff].StaffID = [@crossIdTable].[OldID]
 
-	FETCH NEXT FROM cursor_teachingStaff INTO 
-		@name, 
-		@staffType,
-		@subjectName;
-
-	WHILE @@FETCH_STATUS = 0
-    BEGIN
-        EXEC AddStaff @name = @name, @staffType = @staffType, @subjectName = @subjectName;
-        FETCH NEXT FROM cursor_teachingStaff INTO 
-			@name, 
-			@staffType,
-			@subjectName;
-    END;
-
-	CLOSE cursor_teachingStaff;
-
-	DEALLOCATE cursor_teachingStaff;
-
-
-	-- Adding Administrative staff
-	DECLARE cursor_administrativeStaff CURSOR
-	FOR
-	SELECT [@staff].[Name], [@staff].[StaffTypeID], [@administrativeStaff].Position  FROM @staff inner join @administrativeStaff on [@staff].StaffID = [@administrativeStaff].StaffID;
-
-	OPEN cursor_administrativeStaff;
-
-	FETCH NEXT FROM cursor_administrativeStaff INTO 
-		@name, 
-		@staffType,
-		@position;
-
-	WHILE @@FETCH_STATUS = 0
-    BEGIN
-        EXEC AddStaff @name = @name, @staffType = @staffType, @position = @position;
-        FETCH NEXT FROM cursor_administrativeStaff INTO 
-			@name, 
-			@staffType,
-			@position;
-    END;
-
-	CLOSE cursor_administrativeStaff;
-
-	DEALLOCATE cursor_administrativeStaff;
-
-	-- Adding Support staff
-	DECLARE cursor_supportStaff CURSOR
-	FOR
-	SELECT [@staff].[Name], [@staff].[StaffTypeID], [@supportStaff].[Role] FROM @staff inner join @supportStaff on [@staff].StaffID = [@supportStaff].StaffID;
-
-	OPEN cursor_supportStaff;
-
-	FETCH NEXT FROM cursor_supportStaff INTO 
-		@name, 
-		@staffType,
-		@role;
-
-	WHILE @@FETCH_STATUS = 0
-    BEGIN
-        EXEC AddStaff @name = @name, @staffType = @staffType, @role = @role;
-        FETCH NEXT FROM cursor_supportStaff INTO 
-			@name, 
-			@staffType,
-			@role;
-    END;
-
-	CLOSE cursor_supportStaff;
-
-	DEALLOCATE cursor_supportStaff;
+	 --Adding Support Staff
+	 INSERT INTO [dbo].[supportStaff]
+           ([StaffID]
+           ,[Role])
+     SELECT staff.StaffID, [@supportStaff].[Role] FROM staff INNER JOIN @crossIdTable
+	 ON staff.StaffID = [@crossIdTable].[NewID]
+	 INNER JOIN @supportStaff 
+	 ON [@supportStaff].StaffID = [@crossIdTable].[OldID]
 
 END
