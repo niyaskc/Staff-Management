@@ -31,8 +31,8 @@ BEGIN
 	INSERT INTO [dbo].[teachingStaff]
            ([StaffID]
            ,[SubjectName])
-     SELECT staff.StaffID, [@teachingStaff].SubjectName FROM staff INNER JOIN @crossIdTable
-	 ON staff.StaffID = [@crossIdTable].[NewID]
+     SELECT [@crossIdTable].[NewID], [@teachingStaff].SubjectName 
+	 FROM @crossIdTable
 	 INNER JOIN @teachingStaff 
 	 ON [@teachingStaff].StaffID = [@crossIdTable].[OldID]
 
@@ -40,8 +40,8 @@ BEGIN
 	 INSERT INTO [dbo].[administrativeStaff]
            ([StaffID]
            ,[Position])
-     SELECT staff.StaffID, [@administrativeStaff].Position FROM staff INNER JOIN @crossIdTable
-	 ON staff.StaffID = [@crossIdTable].[NewID]
+     SELECT [@crossIdTable].[NewID], [@administrativeStaff].Position 
+	 FROM @crossIdTable
 	 INNER JOIN @administrativeStaff 
 	 ON [@administrativeStaff].StaffID = [@crossIdTable].[OldID]
 
@@ -49,9 +49,11 @@ BEGIN
 	 INSERT INTO [dbo].[supportStaff]
            ([StaffID]
            ,[Role])
-     SELECT staff.StaffID, [@supportStaff].[Role] FROM staff INNER JOIN @crossIdTable
-	 ON staff.StaffID = [@crossIdTable].[NewID]
+     SELECT [@crossIdTable].[NewID], [@supportStaff].[Role] 
+	 FROM @crossIdTable
 	 INNER JOIN @supportStaff 
 	 ON [@supportStaff].StaffID = [@crossIdTable].[OldID]
 
 END
+GO
+
