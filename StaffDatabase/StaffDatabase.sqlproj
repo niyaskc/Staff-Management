@@ -79,10 +79,7 @@
     <Build Include="dbo\Stored Procedures\AddStaff.sql" />
     <Build Include="dbo\Stored Procedures\UpdateStaff.sql" />
     <Build Include="dbo\Stored Procedures\AddStaffBulk.sql" />
-    <Build Include="dbo\User Defined Types\TeachingStaffType.sql" />
-    <Build Include="dbo\User Defined Types\SupportStaffType.sql" />
-    <Build Include="dbo\User Defined Types\StaffType.sql" />
-    <Build Include="dbo\User Defined Types\AdministrativeStaffType.sql" />
     <Build Include="dbo\Stored Procedures\UpdateStaffBulk.sql" />
+    <Build Include="dbo\User Defined Types\StaffTableType.sql" />
   </ItemGroup>
 </Project>
