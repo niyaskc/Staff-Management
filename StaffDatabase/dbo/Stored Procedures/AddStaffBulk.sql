@@ -5,54 +5,48 @@
 -- =============================================
 CREATE PROCEDURE [dbo].[AddStaffBulk] 
 	-- Add the parameters for the stored procedure here
-	@staff StaffType READONLY,
-	@teachingStaff TeachingStaffType READONLY,
-	@administrativeStaff AdministrativeStaffType READONLY,
-	@supportStaff SupportStaffType READONLY
+	@staffTable StaffTableType READONLY
 AS
 BEGIN
 	
-	DECLARE @crossIdTable TABLE (OldID INT, [NewID] INT );
+	DECLARE @crossIdTable TABLE ([StaffID] INT, [StaffTypeID] INT, [SubjectName] NCHAR (25), [Position] NCHAR (25), [Role] NCHAR (25));
 
 	-- Adding Staff Common
 	MERGE INTO staff
-	USING @staff ON 1=0
+	USING @staffTable ON 1=0
 	WHEN NOT MATCHED BY TARGET
 	THEN
 		INSERT
            ([Name]
            ,[StaffTypeID])
 		VALUES
-           ([@staff].[Name]
-           ,[@staff].[StaffTypeID])
-		OUTPUT [@staff].StaffID, inserted.StaffID  INTO @crossIdTable (OldID, [NewId]);
+           ([@staffTable].[Name]
+           ,[@staffTable].[StaffTypeID])
+		OUTPUT inserted.StaffID, inserted.[StaffTypeID], [@staffTable].[SubjectName], [@staffTable].[Position], [@staffTable].[Role]  INTO @crossIdTable ([StaffID], [StaffTypeID], [SubjectName], [Position], [Role]);
 
 	-- Adding Teaching Staff
 	INSERT INTO [dbo].[teachingStaff]
            ([StaffID]
            ,[SubjectName])
-     SELECT [@crossIdTable].[NewID], [@teachingStaff].SubjectName 
+     SELECT [@crossIdTable].[StaffID], [@crossIdTable].SubjectName 
 	 FROM @crossIdTable
-	 INNER JOIN @teachingStaff 
-	 ON [@teachingStaff].StaffID = [@crossIdTable].[OldID]
+	 Where [@crossIdTable].StaffTypeID = 1
 
 	 --Adding Administrative Staff
 	 INSERT INTO [dbo].[administrativeStaff]
            ([StaffID]
            ,[Position])
-     SELECT [@crossIdTable].[NewID], [@administrativeStaff].Position 
+     SELECT [@crossIdTable].[StaffID], [@crossIdTable].Position 
 	 FROM @crossIdTable
-	 INNER JOIN @administrativeStaff 
-	 ON [@administrativeStaff].StaffID = [@crossIdTable].[OldID]
+	 Where [@crossIdTable].StaffTypeID = 2
 
 	 --Adding Support Staff
 	 INSERT INTO [dbo].[supportStaff]
            ([StaffID]
            ,[Role])
-     SELECT [@crossIdTable].[NewID], [@supportStaff].[Role] 
+     SELECT [@crossIdTable].[StaffID], [@crossIdTable].[Role] 
 	 FROM @crossIdTable
-	 INNER JOIN @supportStaff 
-	 ON [@supportStaff].StaffID = [@crossIdTable].[OldID]
+	 Where [@crossIdTable].StaffTypeID = 3
 
 END
 GO

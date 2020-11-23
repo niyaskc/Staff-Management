@@ -5,31 +5,28 @@
 -- =============================================
 CREATE PROCEDURE [dbo].[UpdateStaffBulk] 
 	-- Add the parameters for the stored procedure here
-	@staff StaffType READONLY,
-	@teachingStaff TeachingStaffType READONLY,
-	@administrativeStaff AdministrativeStaffType READONLY,
-	@supportStaff SupportStaffType READONLY
+	@staffTable StaffTableType READONLY
 AS
 BEGIN
 
 	UPDATE [dbo].[staff]
-	SET [Name] = [@staff].[Name]
-	FROM staff INNER JOIN @staff
-	ON [@staff].StaffID = staff.StaffID AND [@staff].StaffTypeID = staff.StaffTypeID;
+	SET [Name] = [@staffTable].[Name]
+	FROM staff INNER JOIN @staffTable
+	ON [@staffTable].StaffID = staff.StaffID AND [@staffTable].StaffTypeID = staff.StaffTypeID;
 
 	UPDATE [dbo].[teachingStaff]
-		SET [SubjectName] = [@teachingStaff].SubjectName
-		FROM teachingStaff INNER JOIN @teachingStaff 
-		ON [@teachingStaff].StaffID = teachingStaff.StaffID;
+		SET [SubjectName] = [@staffTable].SubjectName
+		FROM teachingStaff INNER JOIN @staffTable 
+		ON [@staffTable].StaffID = teachingStaff.StaffID;
 
 	UPDATE [dbo].[administrativeStaff]
-		SET [Position] = [@administrativeStaff].Position
-		FROM administrativeStaff INNER JOIN @administrativeStaff 
-		ON [@administrativeStaff].StaffID = administrativeStaff.StaffID;
+		SET [Position] = [@staffTable].Position
+		FROM administrativeStaff INNER JOIN @staffTable 
+		ON [@staffTable].StaffID = administrativeStaff.StaffID;
 
 	UPDATE [dbo].[supportStaff]
-		SET [Role] = [@supportStaff].Role
-		FROM supportStaff INNER JOIN @supportStaff
-		ON [@supportStaff].StaffID = supportStaff.StaffID;
+		SET [Role] = [@staffTable].[Role]
+		FROM supportStaff INNER JOIN @staffTable
+		ON [@staffTable].StaffID = supportStaff.StaffID;
 
 END
