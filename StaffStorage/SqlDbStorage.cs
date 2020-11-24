@@ -15,33 +15,40 @@ namespace StaffStorage
         {
             using (SqlConnection connection = new SqlConnection(_sqlConnection))
             {
-                connection.Open();
-                SqlCommand sql_cmnd = new SqlCommand("AddStaff", connection);
-                sql_cmnd.CommandType = CommandType.StoredProcedure;
-
-                //Adding Common Fields
-                sql_cmnd.Parameters.AddWithValue("@Name", staff.Name);
-                sql_cmnd.Parameters.AddWithValue("@staffType", (int)staff.StaffType);
-
-                //Adding specific Fields
-                switch (staff.StaffType)
+                try
                 {
-                    case StaffType.teachingStaff:
-                        sql_cmnd.Parameters.AddWithValue("@subjectName", ((TeachingStaff)staff).SubjectName);
-                        break;
-                    case StaffType.administrativeStaff:
-                        sql_cmnd.Parameters.AddWithValue("@position", ((AdministrativeStaff)staff).Position);
-                        break;
-                    case StaffType.supportStaff:
-                        sql_cmnd.Parameters.AddWithValue("@role", ((SupportStaff)staff).Role);
-                        break;
-                }
+                    connection.Open();
+                    SqlCommand sql_cmnd = new SqlCommand("AddStaff", connection);
+                    sql_cmnd.CommandType = CommandType.StoredProcedure;
 
-                if (sql_cmnd.ExecuteNonQuery() > 0)
-                {
-                    return true;
+                    //Adding Common Fields
+                    sql_cmnd.Parameters.AddWithValue("@Name", staff.Name);
+                    sql_cmnd.Parameters.AddWithValue("@staffType", (int)staff.StaffType);
+
+                    //Adding specific Fields
+                    switch (staff.StaffType)
+                    {
+                        case StaffType.teachingStaff:
+                            sql_cmnd.Parameters.AddWithValue("@subjectName", ((TeachingStaff)staff).SubjectName);
+                            break;
+                        case StaffType.administrativeStaff:
+                            sql_cmnd.Parameters.AddWithValue("@position", ((AdministrativeStaff)staff).Position);
+                            break;
+                        case StaffType.supportStaff:
+                            sql_cmnd.Parameters.AddWithValue("@role", ((SupportStaff)staff).Role);
+                            break;
+                    }
+
+                    if (sql_cmnd.ExecuteNonQuery() > 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
-                else
+                catch
                 {
                     return false;
                 }
@@ -72,37 +79,45 @@ namespace StaffStorage
         {
             using (SqlConnection connection = new SqlConnection(_sqlConnection))
             {
-                connection.Open();
-                SqlCommand sql_cmnd = new SqlCommand("UpdateStaff", connection);
-                sql_cmnd.CommandType = CommandType.StoredProcedure;
-
-                //Adding Common Fields
-                sql_cmnd.Parameters.AddWithValue("@staffId", id);
-                sql_cmnd.Parameters.AddWithValue("@Name", staff.Name);
-                sql_cmnd.Parameters.AddWithValue("@staffType", (int)staff.StaffType);
-
-                //Adding specific Fields
-                switch (staff.StaffType)
+                try
                 {
-                    case StaffType.teachingStaff:
-                        sql_cmnd.Parameters.AddWithValue("@subjectName", ((TeachingStaff)staff).SubjectName);
-                        break;
-                    case StaffType.administrativeStaff:
-                        sql_cmnd.Parameters.AddWithValue("@position", ((AdministrativeStaff)staff).Position);
-                        break;
-                    case StaffType.supportStaff:
-                        sql_cmnd.Parameters.AddWithValue("@role", ((SupportStaff)staff).Role);
-                        break;
-                }
+                    connection.Open();
+                    SqlCommand sql_cmnd = new SqlCommand("UpdateStaff", connection);
+                    sql_cmnd.CommandType = CommandType.StoredProcedure;
 
-                if (sql_cmnd.ExecuteNonQuery() > 0)
-                {
-                    return true;
+                    //Adding Common Fields
+                    sql_cmnd.Parameters.AddWithValue("@staffId", id);
+                    sql_cmnd.Parameters.AddWithValue("@Name", staff.Name);
+                    sql_cmnd.Parameters.AddWithValue("@staffType", (int)staff.StaffType);
+
+                    //Adding specific Fields
+                    switch (staff.StaffType)
+                    {
+                        case StaffType.teachingStaff:
+                            sql_cmnd.Parameters.AddWithValue("@subjectName", ((TeachingStaff)staff).SubjectName);
+                            break;
+                        case StaffType.administrativeStaff:
+                            sql_cmnd.Parameters.AddWithValue("@position", ((AdministrativeStaff)staff).Position);
+                            break;
+                        case StaffType.supportStaff:
+                            sql_cmnd.Parameters.AddWithValue("@role", ((SupportStaff)staff).Role);
+                            break;
+                    }
+
+                    if (sql_cmnd.ExecuteNonQuery() > 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
-                else
+                catch
                 {
                     return false;
                 }
+                
             }
         }
 
@@ -164,11 +179,18 @@ namespace StaffStorage
                 SqlCommand sql_cmnd = new SqlCommand("AddStaffBulk", connection);
                 sql_cmnd.CommandType = CommandType.StoredProcedure;
                 sql_cmnd.Parameters.AddWithValue("@staffTable", _GetTableFromList(staffs));
-                if (sql_cmnd.ExecuteNonQuery() > 0)
+                try
                 {
-                    return true;
+                    if (sql_cmnd.ExecuteNonQuery() > 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
-                else
+                catch
                 {
                     return false;
                 }
@@ -183,11 +205,18 @@ namespace StaffStorage
                 SqlCommand sql_cmnd = new SqlCommand("UpdateStaffBulk", connection);
                 sql_cmnd.CommandType = CommandType.StoredProcedure;
                 sql_cmnd.Parameters.AddWithValue("@staffTable", _GetTableFromList(staffs));
-                if (sql_cmnd.ExecuteNonQuery() > 0)
+                try
                 {
-                    return true;
+                    if (sql_cmnd.ExecuteNonQuery() > 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
-                else
+                catch
                 {
                     return false;
                 }

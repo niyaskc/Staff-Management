@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StaffConsoleApp", "StaffCon
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StaffModelsLibrary", "StaffModelsLibrary\StaffModelsLibrary.csproj", "{D5EDC42B-DAD5-477A-A4EF-4353368E1EF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StaffStorage", "StaffStorage\StaffStorage.csproj", "{EEA7ED4E-C38A-4813-A2AB-0E569CC21B13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StaffStorage", "StaffStorage\StaffStorage.csproj", "{EEA7ED4E-C38A-4813-A2AB-0E569CC21B13}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "StaffDatabase", "StaffDatabase\StaffDatabase.sqlproj", "{F96E555A-9F31-4AED-B314-BDC5C9A9641E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StaffWebApi", "StaffWebApi\StaffWebApi.csproj", "{934883EA-B0B0-4EDC-9A19-CB24B074019C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +37,10 @@ Global
 		{F96E555A-9F31-4AED-B314-BDC5C9A9641E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F96E555A-9F31-4AED-B314-BDC5C9A9641E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F96E555A-9F31-4AED-B314-BDC5C9A9641E}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{934883EA-B0B0-4EDC-9A19-CB24B074019C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{934883EA-B0B0-4EDC-9A19-CB24B074019C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{934883EA-B0B0-4EDC-9A19-CB24B074019C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{934883EA-B0B0-4EDC-9A19-CB24B074019C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
