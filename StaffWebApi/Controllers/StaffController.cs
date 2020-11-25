@@ -51,8 +51,15 @@ namespace StaffWebApi.Controllers
                 if (resStafs.Count > 0) {
                     return Ok(resStafs);
                 }
+                else
+                {
+                    return NotFound();
+                }
             }
-            return NotFound();
+            else
+            {
+                return NotFound();
+            }
         }
 
         [HttpGet("{id:int}")]
@@ -63,7 +70,10 @@ namespace StaffWebApi.Controllers
             {
                 return Ok(staff);
             }
-            return NotFound();
+            else
+            {
+                return NotFound();
+            }
         }
 
         [HttpPost]
@@ -73,35 +83,41 @@ namespace StaffWebApi.Controllers
 
             if (staff == null)
             {
-                return NoContent();
+                return BadRequest();
             }
             bool isCreated = _sqlDbStorage.AddStaff(staff);
             if (isCreated)
             {
                 return StatusCode(201);
             }
-            return BadRequest();
+            else
+            {
+                return BadRequest();
+            }
         }
             
         [HttpPut("{id:int}")]
         public IActionResult UpdateStaff(int id, JObject staffJson)
         {
             Staff staff = _GetStaffFromJson(staffJson);
-
-            if (staff == null)
+           
+            if (staff == null || id != staff.Id)
             {
-                return NoContent();
+                return BadRequest();
             }
             bool isUpdated = _sqlDbStorage.UpdateStaff(id, staff);
             if (isUpdated)
             {
                 return Ok();
-            }
-            if (_sqlDbStorage.ViewStaff(id) != null )
+            }else if(_sqlDbStorage.ViewStaff(id) == null)
             {
-                return NoContent();
+                return NotFound();
             }
-            return NotFound();
+            else
+            {
+                return BadRequest();
+            }
+            
         }
 
         [HttpDelete("{id:int}")]
@@ -112,24 +128,24 @@ namespace StaffWebApi.Controllers
             {
                 return Ok();
             }
-            return NotFound();
+            else
+            {
+                return NotFound();
+            }
         }
 
         private Staff _GetStaffFromJson(JObject staffJson)
         {
             try
             {
-                switch ((int)staffJson["StaffType"])
+                switch ((int)staffJson["staffType"])
                 {
                     case (int)StaffType.teachingStaff:
-                        staffJson.ToObject<TeachingStaff>();
-                        break;
+                        return staffJson.ToObject<TeachingStaff>();
                     case (int)StaffType.administrativeStaff:
-                        staffJson.ToObject<AdministrativeStaff>();
-                        break;
+                        return staffJson.ToObject<AdministrativeStaff>();
                     case (int)StaffType.supportStaff:
-                        staffJson.ToObject<SupportStaff>();
-                        break;
+                        return staffJson.ToObject<SupportStaff>();
                 }
             }
             catch{}

@@ -26,6 +26,15 @@ namespace StaffWebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers().AddNewtonsoftJson();
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin();
+                    });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,6 +46,8 @@ namespace StaffWebApi
             }
 
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseAuthorization();
 
