@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Staff Management</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <script src='main.js'></script>
+</head>
+
+<body>
+    <h1>Staff Management</h1>
+
+    <div>
+        <div class="center">
+            <label for="staff-type-dropdown">Choose a Staff Type : </label>
+            <select name="staff-type-dropdown" id="staff-type-dropdown" onchange="getAllStaffFromWeb(this.value)">
+                <option value="teaching">Teaching Staff</option>
+                <option value="admin">Administrative Staff</option>
+                <option value="support">Support staff</option>
+            </select>
+
+            <button onclick="createNewStaffPopup()">New Staff</button>
+            <button onclick="showDeleteConfirmPopup(()=>deleteSelectedStaffs())">Delete Selected Staff</button>
+        </div>
+        <div>
+            <table id="staffs-table"></table>
+        </div>
+    </div>
+
+    <!-- The Staff Popup (Modal) -->
+    <div id="staffFormPopup" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closeStaffPopup()">&times;</span>
+                <h2 id="StaffFormTitle"></h2>
+            </div>
+            <div class="modal-body">
+                <form id="staffForm"></form>
+            </div>
+            <!-- <div class="modal-footer">
+                <h3>Modal Footer</h3>
+            </div> -->
+        </div>
+    </div>
+
+    <!-- Info (Modal) -->
+    <div id="infoPopup" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content center alert" id="infoPopupBody">
+            <span class="close" onclick="closeInfoPopup()" style="color: white;">&times; </span>
+            <span id="infoPopupText"></span>
+
+        </div>
+    </div>
+
+    <!-- Delete Confirm (Modal) -->
+    <div id="deleteConfirmationPopup" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content container">
+            <h1>Delete Staff</h1>
+            <p>Are you sure you want to delete the staff?</p>
+
+            <div class="clearfix">
+                <button type="button" onclick="closeDeleteConfirmPopup()"
+                    class="cancelbtn">Cancel</button>
+                <button type="button" id="deleteConfirmedButton"
+                    class="deletebtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
