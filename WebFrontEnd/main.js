@@ -1,5 +1,6 @@
 var staffsData = {};
 var staffPopup, staffForm, infoPopup, deleteConfirmPopup;
+var numPerPage = 2, currentPage = 1;
 var staffTypeObject = {
     teaching: "teaching",
     admin: "admin",
@@ -33,7 +34,7 @@ function getAllStaffFromWeb(typeStr) {
             } else if (response.status == 404) {
                 staffsData.SelectedType = typeStr;
                 staffsData.staffs = null;
-                loadStaffsToTable();
+                setUpPaginationAndLoadTable(1);
             } else {
                 throw "invalid Staff Type"
             }
@@ -42,7 +43,7 @@ function getAllStaffFromWeb(typeStr) {
             staffsData.SelectedType = typeStr;
             if (i != null) {
                 staffsData.staffs = [...i];
-                loadStaffsToTable();
+                setUpPaginationAndLoadTable(1);
             }
         })
         .catch((error) => showInfoPopup(error, 3000, infoPopupBackgroundStyles.error));
@@ -126,9 +127,12 @@ function deleteStaffInWeb(staffIdForDelete) {
 }
 
 
-function loadStaffsToTable() {
+function loadStaffsToTable(pageNo) {
 
     var table = document.getElementById("staffs-table");
+
+    //setting current page
+    currentPage = pageNo;
 
     //Clear table
     table.innerHTML = "";
@@ -138,13 +142,13 @@ function loadStaffsToTable() {
     var specificItems = "";
     switch (staffsData.SelectedType) {
         case staffTypeObject.teaching:
-            specificItems = `<th onClick="sortAndSwitch(this.cellIndex, true, this)">Subject Name</th>`;
+            specificItems = `<th onClick="sortAndSwitch('subjectName', true, this.cellIndex)">Subject Name</th>`;
             break;
         case staffTypeObject.admin:
-            specificItems = `<th onClick="sortAndSwitch(this.cellIndex, true, this)">Position</th>`;
+            specificItems = `<th onClick="sortAndSwitch('position', true, this.cellIndex)">Position</th>`;
             break;
         case staffTypeObject.support:
-            specificItems = `<th onClick="sortAndSwitch(this.cellIndex, true, this)">Role</th>`;
+            specificItems = `<th onClick="sortAndSwitch('role', true, this.cellIndex)">Role</th>`;
             break;
         default:
             return;
@@ -152,8 +156,8 @@ function loadStaffsToTable() {
     //--Adding common Fields
     var row = `<tr>
                 <th> <input type="checkbox" onClick="onSelectAllStaff()"></th>
-                <th onClick="sortAndSwitch(this.cellIndex, true, this)">Staff ID</th>
-                <th onClick="sortAndSwitch(this.cellIndex, true, this)">Name</th>
+                <th onClick="sortAndSwitch('id', true, this.cellIndex)">Staff ID</th>
+                <th onClick="sortAndSwitch('name', true, this.cellIndex)">Name</th>
                 ${specificItems}
                 <th>Edit/Delete</th>
             </tr>`;
@@ -166,7 +170,14 @@ function loadStaffsToTable() {
     }
 
     //Fill rows
-    for (let element of staffsData.staffs) {
+    var startItem = numPerPage * (pageNo - 1);
+    for (let i = startItem; i < staffsData.staffs.length; i++) {
+
+        if(i == numPerPage * pageNo){
+            break;
+        }
+
+        let element = staffsData.staffs[i];
 
         //Add row
         let row = table.insertRow();
@@ -211,7 +222,9 @@ function insertCellToRow(row, value) {
     cell.appendChild(text);
 }
 
-function sortAndSwitch(index, isReverse, cell) {
+function sortAndSwitch(index, isReverse, headCellIndex) {
+
+    sortTable(index, isReverse);
 
     //Clear all symbols
     var table = document.getElementById("staffs-table");
@@ -219,38 +232,52 @@ function sortAndSwitch(index, isReverse, cell) {
         col.setAttribute("class", "");
     }
 
-    cell.setAttribute("onClick", `sortAndSwitch(${index}, ${!isReverse}, this)`);
-    cell.setAttribute("class", `${isReverse ? "headerSortUp" : "headerSortDown"}`);
-    sortTable(index, isReverse);
+    table.rows[0].cells[headCellIndex].setAttribute("onClick", `sortAndSwitch('${index}', ${!isReverse}, this.cellIndex)`);
+    table.rows[0].cells[headCellIndex].setAttribute("class", `${isReverse ? "headerSortUp" : "headerSortDown"}`);
 }
 
 function sortTable(nameIndex, isReverse) {
-    var table, rows, switching, i, x, y, shouldSwitch;
-    table = document.getElementById("staffs-table");
-    switching = true;
-    while (switching) {
-        switching = false;
-        rows = table.rows;
-        for (i = 1; i < (rows.length - 1); i++) {
-            shouldSwitch = false;
-            x = rows[i].getElementsByTagName("TD")[nameIndex];
-            y = rows[i + 1].getElementsByTagName("TD")[nameIndex];
-            if (isReverse) {
-                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                    shouldSwitch = true;
-                    break;
-                }
-            } else {
-                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                    shouldSwitch = true;
-                    break;
-                }
-            }
-        }
-        if (shouldSwitch) {
-            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-            switching = true;
-        }
+    if(isReverse){
+        staffsData.staffs = staffsData.staffs.sort((s, g) => g[nameIndex].toString().toLowerCase() > s[nameIndex].toString().toLowerCase() ? 1 : -1 );
+        console.log(staffsData.staffs);
+    }else{
+        staffsData.staffs = staffsData.staffs.sort((s, g) => g[nameIndex].toString().toLowerCase() < s[nameIndex].toString().toLowerCase() ? 1 : -1 );
+        console.log(staffsData.staffs);
+    }
+    setUpPaginationAndLoadTable(currentPage);
+}
+
+function setUpPaginationAndLoadTable(activePage){
+    var paginationDiv = document.getElementById("paginationDiv");
+    var totalStaffs = staffsData.staffs.length;
+    var html = `<span onClick="prevPage()">&laquo;</span>`
+    for(var i = 1; i <= Math.ceil(totalStaffs/numPerPage); i++){
+        html += `<span onClick="setUpPaginationAndLoadTable(${i})" class="${activePage == i ? "active" : ""}">${i}</span>`;
+    }
+    html +=  `<span onClick="nextPage()">&raquo;</span>`
+
+    paginationDiv.innerHTML = html;
+
+    loadStaffsToTable(activePage);
+}
+
+function setNumperPage(){
+    var num = parseInt(document.getElementById("numPerPageInput").value);
+    if(num > 1){
+        numPerPage = num;
+        setUpPaginationAndLoadTable(currentPage);
+    }
+}
+
+function nextPage(){
+    if(currentPage < Math.ceil(staffsData.staffs.length/numPerPage)){
+        setUpPaginationAndLoadTable(currentPage+1)
+    }
+}
+
+function prevPage(){
+    if(currentPage > 1){
+        setUpPaginationAndLoadTable(currentPage-1)
     }
 }
 

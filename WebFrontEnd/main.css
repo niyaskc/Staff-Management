@@ -196,8 +196,27 @@ table th {
   padding-right: 10px;
 }
 
-input[type="text"],
-input[type="number"],
+.pagination {
+  display: flex;
+  justify-content: center;
+}
+
+.pagination span {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+}
+
+.pagination span.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.pagination span:hover:not(.active) {background-color: #ddd; cursor: pointer;}
+
+form > input[type="text"],
+form > input[type="number"],
 form > select {
   width: 100%;
   padding: 12px 20px;
