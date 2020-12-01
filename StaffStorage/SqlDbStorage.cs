@@ -223,6 +223,44 @@ namespace StaffStorage
             }
         }
 
+        public Dictionary<string , Object> GetStaffsByPagination(StaffType staffType, int pageNumber, int pageSize, String sortByField, String sortOrder)
+        {
+
+            List<Staff> staffs = new List<Staff>();
+            int totalItems = -1;
+
+            using (SqlConnection connection = new SqlConnection(_sqlConnection))
+            {
+                connection.Open();
+                SqlCommand sql_cmnd = new SqlCommand("GetStaffsWithPagination", connection);
+                sql_cmnd.CommandType = CommandType.StoredProcedure;
+                sql_cmnd.Parameters.AddWithValue("@StaffType", (int)staffType);
+                sql_cmnd.Parameters.AddWithValue("@PageNumber", pageNumber);
+                sql_cmnd.Parameters.AddWithValue("@PageSize", pageSize);
+                sql_cmnd.Parameters.AddWithValue("@SortByField", sortByField);
+                sql_cmnd.Parameters.AddWithValue("@SortOrder", sortOrder);
+                using (SqlDataReader oReader = sql_cmnd.ExecuteReader())
+                {
+                    while (oReader.Read())
+                    {
+                        Staff staff = _GetStaffFromData(oReader);
+                        if (staff != null) staffs.Add(staff);
+                    }
+                    if (oReader.NextResult() && oReader.Read()){
+                        totalItems = (int)oReader["totalItems"];
+                    }
+
+                }
+                connection.Close();
+            }
+            Dictionary<string, object>  resultDict =  new Dictionary<string, object>();
+            resultDict.Add("staffs", staffs);
+            resultDict.Add("totalItems", totalItems);
+            resultDict.Add("sortOrder", sortOrder);
+            resultDict.Add("sortByField", sortByField);
+            return resultDict;
+        }
+
         private Staff _GetStaffFromData(SqlDataReader dataReader)
         {
             Staff staff = null;

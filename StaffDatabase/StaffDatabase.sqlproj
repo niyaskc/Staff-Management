@@ -81,5 +81,6 @@
     <Build Include="dbo\Stored Procedures\AddStaffBulk.sql" />
     <Build Include="dbo\Stored Procedures\UpdateStaffBulk.sql" />
     <Build Include="dbo\User Defined Types\StaffTableType.sql" />
+    <Build Include="dbo\Stored Procedures\GetStaffsWithPagination.sql" />
   </ItemGroup>
 </Project>

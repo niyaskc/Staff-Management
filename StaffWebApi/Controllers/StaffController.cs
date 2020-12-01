@@ -76,6 +76,39 @@ namespace StaffWebApi.Controllers
             }
         }
 
+        [Route("pages/")]
+        [HttpGet]
+        public IActionResult GetStaffByTypeWithPagination(String type, int pageNo, int pageSize, String sortByField, String sortOrder)
+        {
+            Dictionary<string, object> resStafs;
+            switch (type)
+            {
+                case "teaching":
+                    resStafs = _sqlDbStorage.GetStaffsByPagination(StaffType.teachingStaff, pageNo, pageSize, sortByField,sortOrder);
+                    break;
+
+                case "admin":
+                    resStafs = _sqlDbStorage.GetStaffsByPagination(StaffType.administrativeStaff, pageNo, pageSize, sortByField, sortOrder);
+                    break;
+
+                case "support":
+                    resStafs = _sqlDbStorage.GetStaffsByPagination(StaffType.supportStaff, pageNo, pageSize, sortByField, sortOrder);
+                    break;
+
+                default:
+                    return NotFound();
+            }
+            if (((List<Staff>)resStafs["staffs"]).Count > 0)
+            {
+                return Ok(resStafs);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+
         [HttpPost]
         public IActionResult CreateStaff(JObject staffJson)
         {

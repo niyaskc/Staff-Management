@@ -1,6 +1,8 @@
-var staffsData = {};
-var staffPopup, staffForm, infoPopup, deleteConfirmPopup;
-var numPerPage = 2, currentPage = 1;
+//Active Variables-----------------------------------------------------------------------
+var sortOrderObject = {
+    ascending: "ASC",
+    descending: "DESC"
+}
 var staffTypeObject = {
     teaching: "teaching",
     admin: "admin",
@@ -12,7 +14,30 @@ var infoPopupBackgroundStyles = {
     info: "#2196F3",
     warning: "#ff9800"
 }
-staffsData.SelectedType = staffTypeObject.teaching; //initial stafftype
+//staff data {SelectedType, staffs}
+var staffsData = {
+    SelectedType: staffTypeObject.teaching,
+    total: 0,
+    staffs: null
+};
+
+var tableHeadlins = {
+    StaffID: "Staff ID",
+    Name: "Name",
+    SubjectName: "Subject Name",
+    Position: "Position",
+    Role: "Role"
+}
+
+//html variables
+var staffPopup, staffForm, infoPopup, deleteConfirmPopup;
+
+//Tabe and pagination data
+var numPerPage = 2, currentPage = 1;
+var currentSortOrder = sortOrderObject.ascending;
+var currentSortItemName = tableHeadlins.Name;
+staffsData.SelectedType = staffTypeObject.teaching;
+//End Active Variables ------------------------------------------------------------------
 
 //When document loaded
 document.addEventListener("DOMContentLoaded", () => {
@@ -25,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function getAllStaffFromWeb(typeStr) {
 
-    fetch(`http://localhost:56366/Staff/?type=${typeStr}`, {
+    fetch(`http://localhost:56366/Staff/pages/?type=${typeStr}&pageNo=${currentPage}&pageSize=${numPerPage}&sortByField=${currentSortItemName}&sortOrder=${currentSortOrder}`, {
         method: "GET",
     })
         .then((response) => {
@@ -34,7 +59,8 @@ function getAllStaffFromWeb(typeStr) {
             } else if (response.status == 404) {
                 staffsData.SelectedType = typeStr;
                 staffsData.staffs = null;
-                setUpPaginationAndLoadTable(1);
+                staffsData.total = 0;
+                loadStaffsToTable();
             } else {
                 throw "invalid Staff Type"
             }
@@ -42,8 +68,9 @@ function getAllStaffFromWeb(typeStr) {
         .then((i) => {
             staffsData.SelectedType = typeStr;
             if (i != null) {
-                staffsData.staffs = [...i];
-                setUpPaginationAndLoadTable(1);
+                staffsData.staffs = [...(i.staffs)];
+                staffsData.total = i.totalItems;
+                loadStaffsToTable();
             }
         })
         .catch((error) => showInfoPopup(error, 3000, infoPopupBackgroundStyles.error));
@@ -127,12 +154,9 @@ function deleteStaffInWeb(staffIdForDelete) {
 }
 
 
-function loadStaffsToTable(pageNo) {
+function loadStaffsToTable() {
 
     var table = document.getElementById("staffs-table");
-
-    //setting current page
-    currentPage = pageNo;
 
     //Clear table
     table.innerHTML = "";
@@ -142,13 +166,13 @@ function loadStaffsToTable(pageNo) {
     var specificItems = "";
     switch (staffsData.SelectedType) {
         case staffTypeObject.teaching:
-            specificItems = `<th onClick="sortAndSwitch('subjectName', true, this.cellIndex)">Subject Name</th>`;
+            specificItems = `<th onClick="sortTableByItem(tableHeadlins.SubjectName, sortOrderObject.ascending)">${tableHeadlins.SubjectName}</th>`;
             break;
         case staffTypeObject.admin:
-            specificItems = `<th onClick="sortAndSwitch('position', true, this.cellIndex)">Position</th>`;
+            specificItems = `<th onClick="sortTableByItem(tableHeadlins.Position, sortOrderObject.ascending)">${tableHeadlins.Position}</th>`;
             break;
         case staffTypeObject.support:
-            specificItems = `<th onClick="sortAndSwitch('role', true, this.cellIndex)">Role</th>`;
+            specificItems = `<th onClick="sortTableByItem(tableHeadlins.Role, sortOrderObject.ascending)">${tableHeadlins.Role}</th>`;
             break;
         default:
             return;
@@ -156,8 +180,8 @@ function loadStaffsToTable(pageNo) {
     //--Adding common Fields
     var row = `<tr>
                 <th> <input type="checkbox" onClick="onSelectAllStaff()"></th>
-                <th onClick="sortAndSwitch('id', true, this.cellIndex)">Staff ID</th>
-                <th onClick="sortAndSwitch('name', true, this.cellIndex)">Name</th>
+                <th onClick="sortTableByItem(tableHeadlins.StaffID, sortOrderObject.ascending)">${tableHeadlins.StaffID}</th>
+                <th onClick="sortTableByItem(tableHeadlins.Name, sortOrderObject.ascending)">${tableHeadlins.Name}</th>
                 ${specificItems}
                 <th>Edit/Delete</th>
             </tr>`;
@@ -170,12 +194,7 @@ function loadStaffsToTable(pageNo) {
     }
 
     //Fill rows
-    var startItem = numPerPage * (pageNo - 1);
-    for (let i = startItem; i < staffsData.staffs.length; i++) {
-
-        if(i == numPerPage * pageNo){
-            break;
-        }
+    for (let i = 0; i < staffsData.staffs.length; i++) {
 
         let element = staffsData.staffs[i];
 
@@ -214,6 +233,9 @@ function loadStaffsToTable(pageNo) {
         cell.innerHTML = `<span onClick="editStaffPopup(${element["id"]})" style='font-size: x-large; cursor: pointer'>&#9998;</span>
                           <span onClick="showDeleteConfirmPopup(()=>deleteOneStaff(${element["id"]}))" style='font-size: x-large; cursor: pointer; color: #d11a2a;'><b>&#128465;<b></span>`;
     }
+
+    setUpPagination();
+    setSortSymbol();
 }
 
 function insertCellToRow(row, value) {
@@ -222,9 +244,9 @@ function insertCellToRow(row, value) {
     cell.appendChild(text);
 }
 
-function sortAndSwitch(index, isReverse, headCellIndex) {
+function setSortSymbol() {
 
-    sortTable(index, isReverse);
+    //sortTable(index, isReverse);
 
     //Clear all symbols
     var table = document.getElementById("staffs-table");
@@ -232,52 +254,83 @@ function sortAndSwitch(index, isReverse, headCellIndex) {
         col.setAttribute("class", "");
     }
 
-    table.rows[0].cells[headCellIndex].setAttribute("onClick", `sortAndSwitch('${index}', ${!isReverse}, this.cellIndex)`);
-    table.rows[0].cells[headCellIndex].setAttribute("class", `${isReverse ? "headerSortUp" : "headerSortDown"}`);
-}
+    switch (currentSortItemName) {
+        case tableHeadlins.StaffID:
+            setSortSymbolAndOnclickForSpecificCell(1, "tableHeadlins.StaffID");
+            break;
 
-function sortTable(nameIndex, isReverse) {
-    if(isReverse){
-        staffsData.staffs = staffsData.staffs.sort((s, g) => g[nameIndex].toString().toLowerCase() > s[nameIndex].toString().toLowerCase() ? 1 : -1 );
-        console.log(staffsData.staffs);
-    }else{
-        staffsData.staffs = staffsData.staffs.sort((s, g) => g[nameIndex].toString().toLowerCase() < s[nameIndex].toString().toLowerCase() ? 1 : -1 );
-        console.log(staffsData.staffs);
+        case tableHeadlins.Name:
+            setSortSymbolAndOnclickForSpecificCell(2, "tableHeadlins.Name");
+            break;
+        case tableHeadlins.SubjectName:
+            if(staffsData.SelectedType === staffTypeObject.teaching){
+                setSortSymbolAndOnclickForSpecificCell(3, "tableHeadlins.SubjectName");
+            }
+            break;
+        case tableHeadlins.Position:
+            if(staffsData.SelectedType === staffTypeObject.admin){
+                setSortSymbolAndOnclickForSpecificCell(3, "tableHeadlins.Position");
+            }
+            break;
+        case tableHeadlins.Role:
+            if(staffsData.SelectedType === staffTypeObject.support){
+                setSortSymbolAndOnclickForSpecificCell(3, "tableHeadlins.Role");
+            }
+            break;
+
+        default:
+            return;
     }
-    setUpPaginationAndLoadTable(currentPage);
+}
+function setSortSymbolAndOnclickForSpecificCell(cellNumber, strCellName) {
+    var table = document.getElementById("staffs-table");
+    table.rows[0].cells[cellNumber].setAttribute("onClick", `sortTableByItem(${strCellName}, '${currentSortOrder === sortOrderObject.descending ? sortOrderObject.ascending : sortOrderObject.descending}')`);
+    table.rows[0].cells[cellNumber].setAttribute("class", `${currentSortOrder === sortOrderObject.descending ? "headerSortUp" : "headerSortDown"}`);
 }
 
-function setUpPaginationAndLoadTable(activePage){
+function sortTableByItem(itemName, itemSortOrder) {
+    currentSortItemName = itemName;
+    currentSortOrder = itemSortOrder;
+    getAllStaffFromWeb(staffsData.SelectedType);
+}
+
+function setUpPagination() {
     var paginationDiv = document.getElementById("paginationDiv");
-    var totalStaffs = staffsData.staffs.length;
+    var totalStaffs = staffsData.total;
     var html = `<span onClick="prevPage()">&laquo;</span>`
-    for(var i = 1; i <= Math.ceil(totalStaffs/numPerPage); i++){
-        html += `<span onClick="setUpPaginationAndLoadTable(${i})" class="${activePage == i ? "active" : ""}">${i}</span>`;
+    for (var i = 1; i <= Math.ceil(totalStaffs / numPerPage); i++) {
+        html += `<span onClick="getPage(${i})" class="${currentPage == i ? "active" : ""}">${i}</span>`;
     }
-    html +=  `<span onClick="nextPage()">&raquo;</span>`
+    html += `<span onClick="nextPage()">&raquo;</span>`
 
     paginationDiv.innerHTML = html;
-
-    loadStaffsToTable(activePage);
 }
 
-function setNumperPage(){
+
+function setNumperPage() {
     var num = parseInt(document.getElementById("numPerPageInput").value);
-    if(num > 1){
+    if (num > 1) {
         numPerPage = num;
-        setUpPaginationAndLoadTable(currentPage);
+        getAllStaffFromWeb(staffsData.SelectedType);
     }
 }
 
-function nextPage(){
-    if(currentPage < Math.ceil(staffsData.staffs.length/numPerPage)){
-        setUpPaginationAndLoadTable(currentPage+1)
+function getPage(pageNoToGet) {
+    currentPage = pageNoToGet;
+    getAllStaffFromWeb(staffsData.SelectedType);
+}
+
+function nextPage() {
+    if (currentPage < Math.ceil(staffsData.total / numPerPage)) {
+        currentPage += 1;
+        getAllStaffFromWeb(staffsData.SelectedType);
     }
 }
 
-function prevPage(){
-    if(currentPage > 1){
-        setUpPaginationAndLoadTable(currentPage-1)
+function prevPage() {
+    if (currentPage > 1) {
+        currentPage -= 1;
+        getAllStaffFromWeb(staffsData.SelectedType);
     }
 }
 
@@ -287,9 +340,9 @@ function onSelectAllStaff() {
     var checkedState = table.rows[0].cells[0].getElementsByTagName("input")[0]?.checked;
     if (checkedState != null) {
         for (i = 1; i < rows.length; i++) {
-            try{
+            try {
                 table.rows[i].cells[0].getElementsByTagName("input")[0].checked = checkedState;
-            }catch{}
+            } catch { }
         }
     }
 }
