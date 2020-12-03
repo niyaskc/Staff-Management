@@ -1,0 +1,52 @@
+<!-- The Staff Popup (Modal) -->
+<div *ngIf="isVisibile" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close" (click)="closeForm(false)">&times;</span>
+            <h2>{{action}}</h2>
+        </div>
+        <div class="modal-body">
+            <form>
+                <label for="stafftypeSelect">Staff Type</label>
+                <select name="stafftypeSelect" name="stafftypeSelect" [(ngModel)]="type" [disabled]="action==FormAction.update">
+                    <option [value]="StaffType.teaching">Teaching Staff</option>
+                    <option [value]="StaffType.admin">Administrative Staff</option>
+                    <option [value]="StaffType.support">Support staff</option>
+                </select>
+
+                <ng-container *ngIf="action==FormAction.update">
+                    <label for="staffID">{{TableHeadlines.StaffID}}</label>
+                    <input [(ngModel)]="staff.id" name="staffID" type="number" [placeholder]="TableHeadlines.StaffID" disabled>
+                </ng-container>
+          
+                <label for="staffname">{{TableHeadlines.Name}}</label>
+                <input [(ngModel)]="staff.name" name="staffname" type="text" [placeholder]="TableHeadlines.Name" required>
+
+                <ng-container [ngSwitch]="type">
+                    <ng-container *ngSwitchCase="StaffType.teaching">
+                        <label for="staffSubjectName">{{TableHeadlines.SubjectName}}</label>
+                        <input [(ngModel)]="staff.subjectName" name="staffSubjectName" type="text" [placeholder]="TableHeadlines.SubjectName" required>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="StaffType.admin">
+                        <label for="staffPosition">{{TableHeadlines.Position}}</label>
+                        <input [(ngModel)]="staff.position" name="staffPosition" type="text" [placeholder]="TableHeadlines.Position" required>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="StaffType.support">
+                        <label for="staffRole">{{TableHeadlines.Role}}</label>
+                        <input [(ngModel)]="staff.role"  name="staffRole" type="text" [placeholder]="TableHeadlines.Role" required>
+                    </ng-container>
+                </ng-container>
+
+                <input type="button" (click)="formFinish()" [value]="action==FormAction.update ? 'update' : 'submit'">
+                
+            </form>
+        </div>
+        <!-- <div class="modal-footer">
+                <h3>Modal Footer</h3>
+            </div> -->
+    </div>
+</div>
+
+
+<app-confirm-dialoge [isVisible]="confirmDialogueData.isVisible" [message]="confirmDialogueData.message" [yesFn]="confirmDialogueData.yesFn" [noFn]="confirmDialogueData.noFn" [title]="confirmDialogueData.title"> </app-confirm-dialoge>

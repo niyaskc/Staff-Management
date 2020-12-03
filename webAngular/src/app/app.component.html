@@ -1,0 +1,23 @@
+<h1>{{title}}</h1>
+
+<div>
+  <div class="center">
+      <label for="staff-type-dropdown">Choose Staff Type : </label>
+      <select class="selectStaff" id="staff-type-dropdown" name="staff-type-dropdown" onchange="" [(ngModel)]="selectedStaffType">
+        <option [value]="StaffType.teaching">Teaching Staff</option>
+        <option [value]="StaffType.admin">Administrative Staff</option>
+        <option [value]="StaffType.support">Support staff</option>
+      </select>
+
+      <button (click)="showForm(FormAction.create)" class="addButton">New Staff</button>
+      <button (click)="deleteSelectedFromTable()" class="deleteButton">Delete Selected Staff</button>
+  </div>
+
+  <div>
+      <app-table [selectedStaffType]="this.selectedStaffType" (selectedStaffForEdit)="editStaff($event)"></app-table>
+  </div>
+</div>
+
+
+
+<app-form-popup [isVisibile]="formIsVisible" [type]="this.selectedStaffType" [action]="formAction" [staff]="selectedStaff" (closeFormEvent)="closeForm($event)"> </app-form-popup>

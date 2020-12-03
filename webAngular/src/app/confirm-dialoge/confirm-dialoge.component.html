@@ -1,0 +1,15 @@
+
+    <div *ngIf="isVisible" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content container">
+            <h1>{{title}}</h1>
+            <p>{{message}}</p>
+
+            <div class="clearfix">
+                <button type="button" (click)="noFn()"
+                    class="cancelbtn">Cancel</button>
+                <button type="button" (click)="yesFn()"
+                    class="deletebtn">Yes</button>
+            </div>
+        </div>
+    </div>

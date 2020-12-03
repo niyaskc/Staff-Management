@@ -1,0 +1,27 @@
+.deleteSymbol {
+  font-size: x-large;
+  cursor: pointer;
+  color: #d11a2a;
+}
+
+.editSymbol {
+  font-size: x-large;
+  cursor: pointer;
+}
+
+.rowCenter {
+  text-align: center;
+}
+
+.deleteButton {
+    background-color:#f44336; /* Green */
+    border: none;
+    color: white;
+    padding: 8px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 5px;
+}

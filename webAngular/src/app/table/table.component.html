@@ -1,0 +1,69 @@
+<table id="staffs-table">
+    <tbody>
+        <tr [ngSwitch]="selectedStaffType">
+            <th class=""> <input type="checkbox" [(ngModel)]="isSelectedAll" (change)="selectAllOrNot($event.target.checked)"></th>
+            <th [class.headerSortDown]="currentSortItemName==TableHeadlines.StaffID && currentSortOrder==SortOrder.ascending"
+                [class.headerSortUp]="currentSortItemName==TableHeadlines.StaffID && currentSortOrder==SortOrder.descending"
+                (click)="changeSort(TableHeadlines.StaffID)">
+                {{TableHeadlines.StaffID}}</th>
+            <th [class.headerSortDown]="currentSortItemName==TableHeadlines.Name && currentSortOrder==SortOrder.ascending"
+                [class.headerSortUp]="currentSortItemName==TableHeadlines.Name && currentSortOrder==SortOrder.descending"
+                (click)="changeSort(TableHeadlines.Name)">
+                {{TableHeadlines.Name}}</th>
+            <th *ngSwitchCase="StaffType.teaching"
+                [class.headerSortDown]="currentSortItemName==TableHeadlines.SubjectName && currentSortOrder==SortOrder.ascending"
+                [class.headerSortUp]="currentSortItemName==TableHeadlines.SubjectName && currentSortOrder==SortOrder.descending"
+                (click)="changeSort(TableHeadlines.SubjectName)">
+                {{TableHeadlines.SubjectName}}</th>
+            <th *ngSwitchCase="StaffType.admin"
+                [class.headerSortDown]="currentSortItemName==TableHeadlines.Position && currentSortOrder==SortOrder.ascending"
+                [class.headerSortUp]="currentSortItemName==TableHeadlines.Position && currentSortOrder==SortOrder.descending"
+                (click)="changeSort(TableHeadlines.Position)">
+                {{TableHeadlines.Position}}</th>
+            <th *ngSwitchCase="StaffType.support"
+                [class.headerSortDown]="currentSortItemName==TableHeadlines.Role && currentSortOrder==SortOrder.ascending"
+                [class.headerSortUp]="currentSortItemName==TableHeadlines.Role && currentSortOrder==SortOrder.descending"
+                (click)="changeSort(TableHeadlines.Role)">
+                {{TableHeadlines.Role}}</th>
+            <th class="">Edit / Delete</th>
+        </tr>
+
+        <tr *ngIf="isLoading; else templateNoStaff">
+            <td colspan="1000" class="rowCenter">Loading</td>
+        </tr>
+
+        <ng-template #templateNoStaff>
+            <tr *ngIf="!(staffs?.length)">
+                <td colspan="1000" class="rowCenter">No staff</td>
+            </tr>
+
+            <tr *ngFor="let staff of staffs" [ngSwitch]="selectedStaffType">
+                <td><input type="checkbox" [checked]="isSelectedAll" (change)="selectOrNot(staff.id, $event.target.checked)"></td>
+                <td>{{staff.id}}</td>
+                <td>{{staff.name}}</td>
+                <td *ngSwitchCase="StaffType.teaching">{{staff.subjectName}}</td>
+                <td *ngSwitchCase="StaffType.admin">{{staff.position}}</td>
+                <td *ngSwitchCase="StaffType.support">{{staff.role}}</td>
+                <td class="rowCenter">
+                    <span (click)="editStaff(staff.id)" class="editSymbol">✎</span>
+                    <span (click)="deleteStaff(staff.id)" class="deleteSymbol"><b>🗑</b></span></td>
+            </tr>
+        </ng-template>
+
+
+    </tbody>
+</table>
+
+<div *ngIf="!isLoading && (staffs?.length)" class="center pagination">
+    <input type="number" [ngModel]="numPerPage" (ngModelChange)="setNumPerPageFromInput($event)">
+    <div id="paginationDiv">
+        <span (click)="prevPage()">«</span>
+        <ng-container *ngFor="let item of [].constructor(Math.ceil(totalStaffs/numPerPage)); let i = index">
+            <span (click)="gotToPage(i+1)" [class.active]="currentPage==(i+1)">{{i+1}}</span>
+        </ng-container>
+        <span (click)="nextPage()">»</span>
+    </div>
+</div>
+
+
+<app-confirm-dialoge [isVisible]="confirmDialogueData.isVisible" [message]="confirmDialogueData.message" [yesFn]="confirmDialogueData.yesFn" [noFn]="confirmDialogueData.noFn" [title]="confirmDialogueData.title"> </app-confirm-dialoge>
